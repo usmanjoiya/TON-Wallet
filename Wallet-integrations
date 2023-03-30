@@ -1,0 +1,53 @@
+// Connect TON Wallet
+const connectWalletButton = document.getElementById("connect-wallet-button");
+
+connectWalletButton.addEventListener("click", async () => {
+  try {
+    const client = await window.TONClient.create({
+      servers: ["https://main.ton.dev/"],
+    });
+
+    await client.setup({
+      app_key: "YOUR_APP_KEY",
+    });
+
+    const signer = await client.getSigner({
+      type: "Wallet",
+      init: {
+        public_key: "YOUR_PUBLIC_KEY",
+      },
+    });
+
+    const address = await signer.getDeployAddress();
+
+    const wallet = new window.TON.Wallet({
+      client,
+      signer,
+      address,
+    });
+
+    window.wallet = wallet;
+
+    alert("Connected to TON Wallet!");
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+// Connect TON Keeper
+const connectKeeperButton = document.getElementById("connect-keeper-button");
+
+connectKeeperButton.addEventListener("click", async () => {
+  try {
+    await window.TonWeb.on(
+      "tonEvent",
+      "signer.connect",
+      "Connected to TON Keeper!"
+    );
+    await window.TonWeb.requestPermissions({
+      permissions: ["signer"],
+    });
+  } catch (error) {
+    console.error(error);
+  }
+});
