@@ -1,0 +1,27 @@
+import { TONClient } from "ton-client-js";
+
+async function connect() {
+  const client = new TONClient();
+  await client.setup({
+    network: {
+      server_address: "https://main.ton.dev",
+    },
+  });
+
+  const permissions = {
+    permissions: [
+      {
+        blockchain: "*",
+        contract: "*",
+        method: "*",
+      },
+    ],
+  };
+
+  try {
+    const result = await client.requestPermissions(permissions);
+    console.log(`Wallet address: ${result.address}`);
+  } catch (error) {
+    console.error(error);
+  }
+}
